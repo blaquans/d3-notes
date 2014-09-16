@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+	font: 10px sans-serif;
+}
+
+.arc path {
+	stroke: #fff;
+}
+
+</style>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="d3-tip.js" type="text/javascript" ></script>
+<script>
+
+var width = 960,
+		height = 500,
+		radius = Math.min(width, height) / 2;
+		innerRadius = 0.3 * radius;
+
+var color = d3.scale.ordinal()
+		.range(["#3B9AB2","#EBCC2A","#F21A00"]);
+
+var myscale = d3.scale.linear()
+		.domain([0,25])
+		.range([0,radius]);
+
+var arc0 = d3.svg.arc()
+		.outerRadius(10) 
+		.innerRadius(10);
+
+var arc = d3.svg.arc()
+		.outerRadius(function(d) {
+			return myscale(d.data.freq); 
+		}) 
+		.innerRadius(10);
+
+var pie = d3.layout.pie()
+		.sort(null)
+		.value(function(d) { return 1; });
+
+var svg = d3.select("body").append("svg")
+		.attr("width", width)
+		.attr("height", height)
+	.append("g")
+		.attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+
+// var tip = d3.tip()
+// 	.attr('class', 'd3-tip')
+// 	.offset([0, 0])
+// 	.html(function(d) {
+// 		return d.data.federation + "<br/> <span style='color:orangered'>" + d.data.licences + " licenciés </span>";
+// 	});
+
+// svg.call(tip);
+
+var oranges;
+var apples;
+
+d3.csv("data2.csv", function(error, data) {
+	oranges = filter(data, "orange");
+	apples = filter(data, "apple");
+	drawPie(oranges);
+});
+
+function drawPie(data) {
+	svg
+		.selectAll("path")
+			.data(pie(data))
+				.enter()
+					.append("path")
+						.style("fill", function(d) { return color(d.data.fruit); })
+						.attr("d", arc);
+  }
+
+function filter(data, fruit) {
+	d = [];
+	for(var i in data){
+		if ( fruit === data[i].fruit) {
+			d.push(data[i]);
+		}
+	}
+	return d;
+}
+
+
+</script>
