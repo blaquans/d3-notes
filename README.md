@@ -23,7 +23,7 @@ d3.json
 
 ### Manipulation de données
 
-Les données hiérarchiques peuvent être traitées 
+d3.nest pour traiter les données hiérarchiques.
 
 ### Visualisations
 
